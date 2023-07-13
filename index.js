@@ -64,6 +64,8 @@ function manageCountryExceptions(countryUserInput){
 }
 
 function handleDataExceptions(error){
+  //When fetching data, error 404 is one of the potential errors user can get.
+  //This function helps handle errors such as these.
   if(error == 404){
     resetCoreDisplayInfo();
     const countryNameDisplay = document.getElementById("countryName");
