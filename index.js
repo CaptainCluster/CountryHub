@@ -12,26 +12,33 @@ if (document.readyState !== "loading") {
 }
 
 function mainFunction(){
-const searchButton = document.getElementById("searchButton");
-//We don't want to fetch any data if the new input matches the previous one
-let previousUserInput = "";
-searchButton.addEventListener("click", async function(){
-  //The country user types in as an input will be sent in as a parameter
-  //to be merged with the beginning of the URL so that we can find the data.
-  const htmlInputCountry = document.getElementById("userInputCountry");
-  let countryUserInput = htmlInputCountry.value; 
-  let data = "";
-  countryUserInput = manageCountryExceptions(countryUserInput);
-  //Here we want to make sure the user input is reasonable so that we don't
-  //go through the process unnecessarily.
-  if(countryUserInput != "" && countryUserInput != previousUserInput){
-    data = await getData(countryUserInput);
-    const processedData = processData(data);
-    displayResults(processedData);
-    previousUserInput = countryUserInput;
-  }
-});
-defaultContent();
+  const searchButtonElement = document.getElementById("searchButton");
+  //We don't want to fetch any data if the new input matches the previous one
+  let previousUserInput = "";
+  searchButtonElement.addEventListener("click", async function(){
+    //The country user types in as an input will be sent in as a parameter
+    //to be merged with the beginning of the URL so that we can find the data.
+    const htmlInputCountry = document.getElementById("userInputCountry");
+    let countryUserInput = htmlInputCountry.value; 
+    let data = "";
+    countryUserInput = manageCountryExceptions(countryUserInput);
+    //Here we want to make sure the user input is reasonable so that we don't
+    //go through the process unnecessarily.
+    if(countryUserInput != "" && countryUserInput != previousUserInput){
+      data = await getData(countryUserInput);
+      //If the user input does not provide data for a country, we will get
+      //error 404 and normally the program would crash, thus the program
+      //has to stop the process immediately after detecting the error.
+      if(data.status != 404){
+        const processedData = processData(data);
+        displayResults(processedData);
+        previousUserInput = countryUserInput;
+      } else{
+        handleDataExceptions(404);
+      }
+    }
+  });
+  defaultContent();
 }
 
 function defaultContent(){
@@ -55,6 +62,18 @@ function manageCountryExceptions(countryUserInput){
   return countryUserInput;
 }
 
+function handleDataExceptions(error){
+  if(error == 404){
+    resetCoreDisplayInfo();
+    const countryNameDisplay = document.getElementById("countryName");
+    countryNameDisplay.textContent = "Error 404 detected! Give a valid country name next time!";
+    const coreInfoDisplay = document.getElementById("coreInformation");
+    const defaultPTag = document.createElement("p");
+    defaultPTag.textContent = "The information will be displayed here.";
+    coreInfoDisplay.appendChild(defaultPTag);
+  }
+}
+
 async function getData(countryUserInput){
 //We get our data from the API provided by restworld.com. The user gives the 
 //country name as an input and this function will get all the necessary data.
@@ -64,10 +83,8 @@ async function getData(countryUserInput){
 //data we get.
 const urlBeginning = "https://restcountries.com/v3.1/name/";
 const url = urlBeginning + countryUserInput;
-
 const res = await fetch(url);
 const data = await res.json();
-
 return data;
 }
 
@@ -135,9 +152,7 @@ const coreTextInformation = [
 
 //Here we clear all the information regarding previous search results
 const coreInfoDisplay = document.getElementById("coreInformation");
-while(coreInfoDisplay.firstChild){
-  coreInfoDisplay.firstChild.remove();
-}
+resetCoreDisplayInfo();
 
 const countryNameDisplay = document.getElementById("countryName");
 countryNameDisplay.textContent = processedData[0];
@@ -198,4 +213,11 @@ if(borderNationsList.length == 1){
   borders = "Bordering nations: ";
 }
 return borders;
+}
+
+function resetCoreDisplayInfo(){
+  const coreInfoDisplay = document.getElementById("coreInformation");
+  while(coreInfoDisplay.firstChild){
+  coreInfoDisplay.firstChild.remove();
+  }
 }
