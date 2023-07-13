@@ -35,6 +35,7 @@ function mainFunction(){
         previousUserInput = countryUserInput;
       } else{
         handleDataExceptions(404);
+        previousUserInput = "";
       }
     }
   });
