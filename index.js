@@ -13,26 +13,46 @@ if (document.readyState !== "loading") {
 
 function mainFunction(){
 const searchButton = document.getElementById("searchButton");
+//We don't want to fetch any data if the new input matches the previous one
+let previousUserInput = "";
 searchButton.addEventListener("click", async function(){
   //The country user types in as an input will be sent in as a parameter
   //to be merged with the beginning of the URL so that we can find the data.
   const htmlInputCountry = document.getElementById("userInputCountry");
   let countryUserInput = htmlInputCountry.value; 
-
-  //If the user wants to search for China, we need an if-condition, or else
-  //the program will find information regarding Taiwan. This means that
-  //"China" gives information of People's Republic of China and "Taiwan"
-  //gives information of Taiwan/Republic of China.
-  if(countryUserInput == "china" || countryUserInput == "China"){
-    countryUserInput = "zho"; 
-  }
   let data = "";
-  if(countryUserInput != ""){
+  countryUserInput = manageCountryExceptions(countryUserInput);
+  //Here we want to make sure the user input is reasonable so that we don't
+  //go through the process unnecessarily.
+  if(countryUserInput != "" && countryUserInput != previousUserInput){
     data = await getData(countryUserInput);
     const processedData = processData(data);
     displayResults(processedData);
+    previousUserInput = countryUserInput;
   }
 });
+defaultContent();
+}
+
+function defaultContent(){
+  //Once the user boots the program up, we want to display things that
+  //should help them use it. 
+  const countryNameDisplay = document.getElementById("countryName");
+  countryNameDisplay.textContent =  "Enter the name of the country you want to search.";
+  const coreInfoDisplay = document.getElementById("coreInformation"); 
+  const defaultPTag = document.createElement("p");
+  defaultPTag.textContent = "The information will be displayed here.";
+  coreInfoDisplay.appendChild(defaultPTag);
+}
+
+function manageCountryExceptions(countryUserInput){
+  //Here we handle exceptions when searching for real nations that the API has data 
+  //for.. For instance, by searching "China", the API gives data  of Taiwan as 
+  //default, when data regarding that country can be found by searching "Taiwan". 
+  if(countryUserInput == "china" || countryUserInput == "China"){
+    countryUserInput = "zho"; 
+  }
+  return countryUserInput;
 }
 
 async function getData(countryUserInput){
