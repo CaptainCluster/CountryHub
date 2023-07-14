@@ -14,7 +14,7 @@ body {
 
 .countryNameDisplay{
   background-color: #f5f4f4;
-  padding: 25px;
+  padding: 15px;
   margin-left: 5px;
   margin-right: 5px;
   text-align: left;
@@ -41,7 +41,22 @@ img{
   margin-left: 10px;
   margin-bottom: 10px;
 }
-
 button{
+  background-color: #077fff;
+  color: #fff;
+  border: none;
+  padding: 5px 20px;
+  font-size: 16px;
   cursor: pointer;
+}
+.clicked{
+  background-color: #0052aa;
+}
+.userInput{
+  background-color: #f4f3f3;
+  border-color: #007bff;
+  padding: 5px 10px;
+  text-align: center;
+  font-size: 16px;
+  font-family: 'Times New Roman', Times, serif;
 }

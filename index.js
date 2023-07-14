@@ -38,8 +38,16 @@ function mainFunction(){
         previousUserInput = "";
       }
     }
+    searchButtonVisualResponse(searchButtonElement);
   });
   defaultContent();
+}
+
+function searchButtonVisualResponse(searchButtonElement){
+  searchButton.classList.add("clicked");
+  setTimeout(function(){
+      searchButton.classList.remove("clicked");
+  }, 100);
 }
 
 function defaultContent(){
