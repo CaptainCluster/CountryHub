@@ -113,7 +113,13 @@ function processData(data){
   const languages = Object.values(data[0].languages);
   const currency = Object.values(data[0].currencies)[0].name;
   const currencySymbol = Object.values(data[0].currencies)[0].symbol;
-  const borderNations = Object.values(data[0].borders);
+
+  //If a searched country has no border nations, data[0].border yields
+  //a null, thus the program would crash.
+  let borderNations = ["None"];
+  if(data[0].borders != null){
+    borderNations = Object.values(data[0].borders);
+  } 
 
   const imageFlag = data[0].flags.png;
   const locationMap = data[0].maps.openStreetMaps; 
